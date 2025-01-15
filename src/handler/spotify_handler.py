@@ -12,7 +12,8 @@ class SpotifyHandler:
         
         def __init__(self):
             if not hasattr(self, "_initialized"):
-                self.constants = SpotifyConstants()  # Cargar constantes directamente
+                self.constants = SpotifyConstants()  
+                self.header_token = self.get_token()
                 self.headers = {"Authorization": f"Bearer {self.get_token()}"}
                 self._initialized = True
 
