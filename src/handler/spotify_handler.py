@@ -1,15 +1,20 @@
 import os
 import requests
-from dotenv import load_dotenv
+from constants.general import SpotifyConstants
+
 
 class SpotifyHandler:
+        _instance = None
+        def __new__(cls, *args, **kwargs):
+            if cls._instance is None:
+                cls._instance = super(SpotifyHandler, cls).__new__(cls)
+            return cls._instance
+        
         def __init__(self):
-            load_dotenv()  
-            self.client_id = os.getenv("SPOTIFY_CLIENT_ID")
-            self.client_secret = os.getenv("SPOTIFY_CLIENT_SECRET")
-            self.token_url = os.getenv("SPOTIFY_TOKEN_URL")
-            self.base_url = "https://api.spotify.com/v1"
-            self.headers = {"Authorization": f"Bearer {self.get_token()}"}
+            if not hasattr(self, "_initialized"):
+                self.constants = SpotifyConstants()  # Cargar constantes directamente
+                self.headers = {"Authorization": f"Bearer {self.get_token()}"}
+                self._initialized = True
 
         def get_token(self):
             headers = {
