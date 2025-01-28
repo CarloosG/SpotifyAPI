@@ -8,12 +8,18 @@ class SpotifyHandler:
         def __new__(cls, *args, **kwargs):
             if cls._instance is None:
                 cls._instance = super(SpotifyHandler, cls).__new__(cls)
+                print("New instance created")
             return cls._instance
         
         def __init__(self):
             if not hasattr(self, "_initialized"):
-                self.constants = SpotifyConstants()  
+                print("inicializing object")
+                self.constants = SpotifyConstants
+                self.client_id = self.constants.CLIENT_ID
+                self.client_secret = self.constants.CLIENT_SECRET
+                self.token_url =self.constants.TOKEN_URL
                 self.header_token = self.get_token()
+                self.base_url = "https://api.spotify.com/v1"
                 self.headers = {"Authorization": f"Bearer {self.get_token()}"}
                 self._initialized = True
 
