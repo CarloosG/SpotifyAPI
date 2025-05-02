@@ -1,7 +1,7 @@
 import os
 import requests
-from constants.general import SpotifyConstants
-from utils.requester import Requester
+from src.constants.general import SpotifyConstants
+from src.utils.requester import Requester
 
 class SpotifyHandler:
         _instance = None
