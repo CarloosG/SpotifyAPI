@@ -1,6 +1,6 @@
 import os
 import requests
-from src.constants.general import SpotifyConstants
+from src.constants.general import SpotifyConstants, DockerConstants
 from src.utils.requester import Requester
 
 class SpotifyHandler:
@@ -14,6 +14,7 @@ class SpotifyHandler:
         def __init__(self):
             if not hasattr(self, "_initialized"):
                 print("inicializing object")
+                self.docker_constants= DockerConstants
                 self.constants = SpotifyConstants
                 self.client_id = self.constants.CLIENT_ID
                 self.client_secret = self.constants.CLIENT_SECRET
@@ -42,7 +43,7 @@ class SpotifyHandler:
             return response.json()   
             
         def get_artist_music(self, artist_id:str):
-            url=f"{self.base_url}/artist/{artist_id}/albums"
+            url=f"{self.base_url}/artists/{artist_id}/albums"
             response = self.requester.get(url, headers=self.headers)
             return response.json()  
         

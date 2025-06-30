@@ -1,112 +1,66 @@
 import sys
 import os
 import argparse
+import pandas as pd 
+import sqlalchemy
+from pandas.io.json import json_normalize
+import json
+import psycopg2
+from sqlalchemy import inspect
+from src.handler.spotify_handler import SpotifyHandler
+from src.processors.data_processor import dataProcessor
+
+
+
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../..")))
-from src.handler.spotify_handler import SpotifyHandler
-spotify = SpotifyHandler()
-
-def question1(country1,country2,artist1,artist2):
-    country_1= spotify.get_country_new_releases(country1)
-    country_2= spotify.get_country_new_releases(country2)
-    artist_1=spotify.get_artist_music(artist1)
-    artist_1_data = spotify.get_artist(artist1)
-    artist_2_data=spotify.get_artist(artist2)
-    artist_2_music=spotify.get_artist_music(artist2)
-    print(country_1)
-
-def question2(genre1,genre2,genre3,genre4,artist1,artist2,artist3,artist4):
-    genre_1 = spotify.search_artists_by_genre(genre1)
-    artist_1_data=spotify.get_artist(artist1)
-    genre_2 = spotify.search_artists_by_genre(genre2)
-    artist_2_data=spotify.get_artist(artist2)
-    genre_3 = spotify.search_artists_by_genre(genre3)
-    artist_3_data=spotify.get_artist(artist3)
-    genre_4 = spotify.search_artists_by_genre(genre4)
-    artist_5_data=spotify.get_artist(artist4)
-
-def question3(song1,song1_remix,song2,song2_remix,song3,song3_remix,artist1,artist2,artist3,artist4,artist5,artist6,artist7):
-    song1_data=spotify.get_song(song1)
-    song1_remix_data=spotify.get_song(song1_remix)
-    artist_1_data_data=spotify.get_artist(artist1)
-    artist_2_data=spotify.get_artist(artist2)
-# -case 2 (Emergent artist:Mora , Established artist:Bad bunny-Sehc,Genere:Reggaeton,Country:Puerto Rico)
-    song2_data=spotify.get_song(song2)
-    song2_remix_data=spotify.get_song(song2_remix)
-    artist_3_data=spotify.get_artist(artist3)
-    artist_4_data=spotify.get_artist(artist4)
-    artist_5_data=spotify.get_artist(artist5)
-# -case 3 (Emergent artist:The weekend , Established artist:Ariana Grande,Genere:Pop,Country:USA)
-    song3_data=spotify.get_song(song3)
-    song3_remix_data=spotify.get_song(song3_remix)
-    artist_6_data=spotify.get_artist(artist6)
-    artist_7_data=spotify.get_artist(artist7)
-
-def question4(artist1,artist2,artist3,artist4,artist5,top_year):
-    artist_1_data= spotify.get_artist(artist1)
-    artist_1_music = spotify.get_artist_music(artist1)
-    artist_2_data= spotify.get_artist(artist2)
-    artist_2_music = spotify.get_artist_music(artist2)
-    artist_3_data= spotify.get_artist(artist3)
-    artist_3_music = spotify.get_artist_music(artist3)
-    artist_4_data= spotify.get_artist(artist4)
-    artist_4_music = spotify.get_artist_music(artist4)
-    artist_5_data= spotify.get_artist(artist5)
-    artist_5_music = spotify.get_artist_music(artist5)
-    top_year_data = spotify.get_playlist(top_year)
-
-def parser():
-    global_parser = argparse.ArgumentParser(description="Question1")
-    subparser= global_parser.add_subparsers(title="subcomands")
-    question1_parser = subparser.add_parser("Question1",help="Get metada for question 1 ,this command needs 2 ids from countrys and 2 ids from artist")
-    question1_parser.add_argument("country1", type=str, help="First country ID")
-    question1_parser.add_argument("country2", type=str, help="Second country ID")
-    question1_parser.add_argument("artist1", type=str, help="First artist ID")
-    question1_parser.add_argument("artist2", type=str, help="Second artist ID")
-    question1_parser.set_defaults(func=question1)
-    question2_parser = subparser.add_parser("Question2",help="Get metada for question 2, this command needs 4 ids from genres and 4 ids from artist")
-    question2_parser.add_argument("genre1",type=str,help="Genre 1 id")
-    question2_parser.add_argument("genre2",type=str,help="Genre 2 id")
-    question2_parser.add_argument("genre3",type=str,help="Genre 3 id")
-    question2_parser.add_argument("genre4",type=str,help="Genre 4 id")
-    question2_parser.add_argument("artist1", type=str, help="First artist ID")
-    question2_parser.add_argument("artist2", type=str, help="Second artist ID")
-    question2_parser.add_argument("artist3", type=str, help="Third artist ID")
-    question2_parser.add_argument("artist4", type=str, help="Fourth artist ID")
-    question2_parser.set_defaults(func=question2)
-    question3_parser = subparser.add_parser("Question3",help="Get metada for question 3, this command needs 8 ids from songs, 7 id's from artist")
-    question3_parser.add_argument("song1",type=str,help="Genre 1 id")
-    question3_parser.add_argument("song1_remix",type=str,help="Genre 1 id")
-    question3_parser.add_argument("song2",type=str,help="Genre 2 id")
-    question3_parser.add_argument("song2_remix",type=str,help="Genre 2 id")
-    question3_parser.add_argument("song3",type=str,help="Genre 3 id")
-    question3_parser.add_argument("song3_remix",type=str,help="Genre 3 id")
-    question3_parser.add_argument("song4",type=str,help="Genre 4 id")
-    question3_parser.add_argument("song4_remix",type=str,help="Genre 4 id")
-    question3_parser.add_argument("artist1", type=str, help="First artist ID")
-    question3_parser.add_argument("artist2", type=str, help="Second artist ID")
-    question3_parser.add_argument("artist3", type=str, help="Third artist ID")
-    question3_parser.add_argument("artist4", type=str, help="Fourth artist ID")
-    question3_parser.add_argument("artist5", type=str, help="fifth artist ID")
-    question3_parser.add_argument("artist6", type=str, help="sixth artist ID")
-    question3_parser.add_argument("artist7", type=str, help="seventh artist ID")
-    question3_parser.set_defaults(func=question3)
-    question4_parser = subparser.add_parser("Question4",help="Get metada for question 4,this command need 5 id's from artist and 1 from a music year")
-    question4_parser.add_argument("artist1", type=str, help="First artist ID")
-    question4_parser.add_argument("artist2", type=str, help="Second artist ID")
-    question4_parser.add_argument("artist3", type=str, help="Third artist ID")
-    question4_parser.add_argument("artist4", type=str, help="Fourth artist ID")
-    question4_parser.add_argument("artist5", type=str, help="fifth artist ID")
-    question4_parser.add_argument("top_year", type=str, help="year ID of the top songs")
-    question4_parser.set_defaults(func=question4)
-
-    args = global_parser.parse_args()
-    if hasattr(args, "func"):
-        args_dict = vars(args)
-        args.func(*[args_dict[arg] for arg in args_dict if arg != "func"])
-    else:
-        global_parser.print_help()
 
 
-if __name__ == "__main__":
-    parser()
+class cli:
+    def __init__(self):
+        self.spotify = SpotifyHandler()
+        self.processor = dataProcessor()
+        self.engine = sqlalchemy.create_engine(f"postgresql+psycopg2://{self.spotify.docker_constants.POSTGRES_USER}:{self.spotify.docker_constants.POSTGRES_PASSWORD}@localhost:5432/{self.spotify.docker_constants.POSTGRES_DB}")
+            
+    def parser(self):
+            global_parser = argparse.ArgumentParser(description="Spotify Data Processor CLI")
+            subparsers = global_parser.add_subparsers(title="subcommands", help="Get metadata from spotify API") 
+            arg_template = {
+                "metavar": "ITEM_ID",
+                "help": "ID of the item to process",
+                "type": str,
+                "nargs": 1,
+            }
+            songs_parser = subparsers.add_parser("songs", help="Process songs metadata") #ok
+            songs_parser.add_argument("songs", **arg_template)
+            songs_parser.set_defaults(func=self.processor.process_songs_and_time)
+
+            artist_parser = subparsers.add_parser("artists", help="Process artists metadata")#ok
+            artist_parser.add_argument("artists", **arg_template)
+            artist_parser.set_defaults(func=self.processor.procces_artists)
+
+            album_parser = subparsers.add_parser("albums", help="Process albums metadata") #ok
+            album_parser.add_argument("country",**arg_template)
+            album_parser.add_argument("artist_music", **arg_template)
+            album_parser.set_defaults(func=self.processor.process_albums)
+
+            playlist_parser = subparsers.add_parser("playlist", help="Process playlist metadata")#ok
+            playlist_parser.add_argument("playlist",**arg_template)
+            playlist_parser.set_defaults(func=self.processor.procces_playlist)  
+
+            genre_parser = subparsers.add_parser("genre", help="Process genre metadata") #so so
+            genre_parser.add_argument("genre", **arg_template)
+            genre_parser.set_defaults(func=self.processor.process_genre)
+
+            args = global_parser.parse_args()
+            if hasattr(args, "func"):
+                if hasattr(args, "country") and hasattr(args, "artist_music"):
+                    args.func(args.country, args.artist_music)
+                else:
+                    arg_name = [k for k in vars(args) if k not in ("func",)][0]
+                    args.func(getattr(args, arg_name))
+            else:
+                    global_parser.print_help()
+
+
+
