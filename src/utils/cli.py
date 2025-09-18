@@ -17,11 +17,9 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../..")
 
 
 class cli:
-    def __init__(self):
-        self.spotify = SpotifyHandler()
-        self.processor = dataProcessor()
-        self.engine = sqlalchemy.create_engine(f"postgresql+psycopg2://{self.spotify.docker_constants.POSTGRES_USER}:{self.spotify.docker_constants.POSTGRES_PASSWORD}@localhost:5432/{self.spotify.docker_constants.POSTGRES_DB}")
-            
+    def __init__(self,dataprocessor):
+        self.processor = dataprocessor
+  
     def parser(self):
             global_parser = argparse.ArgumentParser(description="Spotify Data Processor CLI")
             subparsers = global_parser.add_subparsers(title="subcommands", help="Get metadata from spotify API") 

@@ -3,6 +3,8 @@ import requests
 from src.constants.general import SpotifyConstants, DockerConstants
 from src.utils.requester import Requester
 
+
+
 class SpotifyHandler:
         _instance = None
         def __new__(cls, *args, **kwargs):
@@ -11,17 +13,17 @@ class SpotifyHandler:
                 print("New instance created")
             return cls._instance
         
-        def __init__(self):
+        def __init__(self,spotifyConstants,engine):
             if not hasattr(self, "_initialized"):
                 print("inicializing object")
-                self.docker_constants= DockerConstants
-                self.constants = SpotifyConstants
+                self.constants = spotifyConstants
                 self.client_id = self.constants.CLIENT_ID
                 self.client_secret = self.constants.CLIENT_SECRET
                 self.token_url =self.constants.TOKEN_URL
                 self.requester = Requester(max_retries=1, backoff_factor=2)
                 self.header_token = self.get_token()
                 self.base_url = "https://api.spotify.com/v1"
+                self.engine = engine
                 self.headers = {"Authorization": f"Bearer {self.header_token}"}
                 self._initialized = True
 

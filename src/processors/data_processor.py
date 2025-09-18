@@ -18,9 +18,9 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../..")
 
 
 class dataProcessor:
-    def __init__(self):
-        self.spotify = SpotifyHandler()
-        self.engine = sqlalchemy.create_engine(f"postgresql+psycopg2://{self.spotify.docker_constants.POSTGRES_USER}:{self.spotify.docker_constants.POSTGRES_PASSWORD}@localhost:5432/{self.spotify.docker_constants.POSTGRES_DB}")
+    def __init__(self,spotify):
+        self.spotify = spotify
+
 
     def process_songs_and_time(self,songs:list): #ok
         df = pd.DataFrame()
@@ -52,9 +52,9 @@ class dataProcessor:
         dim_tiempo['quarter'] = dim_tiempo['release_date'].dt.quarter
         dim_tiempo['day_of_week'] = dim_tiempo['release_date'].dt.dayofweek
         dim_tiempo['date_id'] = dim_tiempo['release_date'].dt.strftime('%Y%m%d').astype(int)
-        dim_tiempo.to_sql('dim_tiempo', self.engine, if_exists='append', index=False)
+        dim_tiempo.to_sql('dim_tiempo', self.spotify.engine, if_exists='append', index=False)
         df['date_id'] = df['release_date'].dt.strftime('%Y%m%d').astype(int)
-        df.to_sql('fact_tracks', self.engine, if_exists='append', index=False)
+        df.to_sql('fact_tracks', self.spotify.engine, if_exists='append', index=False)
 
 
     def procces_artists(self,artists:list): #ok
@@ -70,7 +70,7 @@ class dataProcessor:
             'popularity': 'artist_popularity',
             'followers_total': 'artist_followers'
         })
-        df.to_sql('dim_artista', self.engine, if_exists='append', index=False)
+        df.to_sql('dim_artista', self.spotify.engine, if_exists='append', index=False)
 
     
     
@@ -101,7 +101,7 @@ class dataProcessor:
             'total_tracks': 'total_tracks',
             'artists': 'artists'
         })
-        df.to_sql('dim_album', self.engine, if_exists='append', index=False)
+        df.to_sql('dim_album', self.spotify.engine, if_exists='append', index=False)
 
     
     
@@ -130,7 +130,7 @@ class dataProcessor:
         )
         df['release_date'] = pd.to_datetime(df['release_date'], errors='coerce')
         df['playlist_added_at'] = pd.to_datetime(df['playlist_added_at'], errors='coerce')
-        df.to_sql('dim_playlist', self.engine, if_exists='append', index=False)
+        df.to_sql('dim_playlist', self.spotify.engine, if_exists='append', index=False)
 
         
     
@@ -148,7 +148,7 @@ class dataProcessor:
             'popularity': 'genre_popularity',
             'followers_total': 'genre_followers'
         })
-        df.to_sql('dim_genero', self.engine, if_exists='append', index=False)
+        df.to_sql('dim_genero', self.spotify.engine, if_exists='append', index=False)
 
     
 
