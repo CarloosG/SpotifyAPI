@@ -4,6 +4,7 @@ from src.processors.data_processor import dataProcessor
 from src.utils.database_schema import DatabaseSchema
 from src.constants.general import SpotifyConstants, DockerConstants
 from src.utils.cli  import cli
+from tests.test_spotify_handler import TestSpotifyHandler
 import pandas as pd
 
 
@@ -15,4 +16,5 @@ if __name__ == "__main__":
         dataProcessor = dataProcessor(spotify)
         cli = cli(dataProcessor)
         cli.parser()
+
 
