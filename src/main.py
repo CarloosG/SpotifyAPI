@@ -1,10 +1,9 @@
 from src.handler.spotify_handler import SpotifyHandler
 from src.handler.postgresql_handler import PostgreSQLHandler
 from src.processors.data_processor import dataProcessor
-from src.utils.database_schema import DatabaseSchema
 from src.constants.general import SpotifyConstants, DockerConstants
 from src.utils.cli  import cli
-from tests.test_spotify_handler import TestSpotifyHandler
+# from tests.test_spotify_handler import TestSpotifyHandler
 import pandas as pd
 
 

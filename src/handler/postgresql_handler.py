@@ -12,5 +12,5 @@ class PostgreSQLHandler:
         if not hasattr(self, "_initialized"):
             print("inicializing object engine")
             self.docker_constants= dockerConstants
-            self.engine = sqlalchemy.create_engine(f"postgresql+psycopg2://{self.docker_constants.POSTGRES_USER}:{self.docker_constants.POSTGRES_PASSWORD}@localhost:5432/{self.docker_constants.POSTGRES_DB}")
+            self.engine = sqlalchemy.create_engine(f"postgresql+psycopg2://{self.docker_constants.POSTGRES_USER}:{self.docker_constants.POSTGRES_PASSWORD}@postgres:5432/{self.docker_constants.POSTGRES_DB}")
             self._initialized = True
