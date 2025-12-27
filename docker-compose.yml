@@ -1,0 +1,53 @@
+# Use postgres/example user/password credentials
+
+
+services:
+
+  postgres:
+    image: postgres
+    container_name: postgres
+    restart: always
+    # set shared memory limit when using docker-compose
+    shm_size: 128mb
+    # or set shared memory limit when deploy via swarm stack
+    #volumes:
+    #  - type: tmpfs
+    #    target: /dev/shm
+    #    tmpfs:
+    #      size: 134217728 # 128*2^20 bytes = 128Mb
+    environment:
+      POSTGRES_PASSWORD:  ${POSTGRES_PASSWORD}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_DB: ${POSTGRES_DB}
+    volumes:
+      - ./init:/docker-entrypoint-initdb.d
+    ports:
+      - "5432:5432"
+
+  pgadmin:
+    container_name: pgadmin
+    image: dpage/pgadmin4
+    restart: always
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${PG_ADMIN_EMAIL}
+      PGADMIN_DEFAULT_PASSWORD: ${PG_ADMIN_PASSWORD}
+    ports:
+    - "5050:80"
+    depends_on:
+    - postgres
+    
+  app:
+      build: .
+      container_name: python_app
+      depends_on:
+        - postgres
+      environment:
+        - SPOTIFY_CLIENT_ID=${SPOTIFY_CLIENT_ID}
+        - SPOTIFY_CLIENT_SECRET=${SPOTIFY_CLIENT_SECRET}
+        - SPOTIFY_TOKEN_URL=${SPOTIFY_TOKEN_URL}
+        - PG_ETL_PASSWORD=${PG_ETL_PASSWORD}
+        - POSTGRES_HOST=postgres
+        - POSTGRES_USER=${POSTGRES_USER}
+        - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+        - POSTGRES_DB=${POSTGRES_DB}
+
