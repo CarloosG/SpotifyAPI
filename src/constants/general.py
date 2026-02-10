@@ -3,13 +3,13 @@ import os
 
 @dataclass(frozen=True)
 class SpotifyConstants:
-    CLIENT_ID: str = os.getenv("SPOTIFY_CLIENT_ID")
-    CLIENT_SECRET: str = os.getenv("SPOTIFY_CLIENT_SECRET")
-    TOKEN_URL: str = os.getenv("SPOTIFY_TOKEN_URL")
+    CLIENT_ID: str = os.getenv("SPOTIFY_CLIENT_ID").strip()
+    CLIENT_SECRET: str = os.getenv("SPOTIFY_CLIENT_SECRET").strip()
+    TOKEN_URL: str = os.getenv("SPOTIFY_TOKEN_URL").strip()
 
 class DockerConstants:
-    POSTGRES_PASSWORD: str = os.getenv("POSTGRES_PASSWORD")
-    POSTGRES_USER: str = os.getenv("POSTGRES_USER")
-    POSTGRES_DB: str = os.getenv("POSTGRES_DB")
-    PG_ADMIN_EMAIL: str = os.getenv("PG_ADMIN_EMAIL")
-    PG_ADMIN_PASSWORD: str = os.getenv("PG_ADMIN_PASSWORD")
+    POSTGRES_PASSWORD: str = os.getenv("POSTGRES_PASSWORD").strip()
+    POSTGRES_USER: str = os.getenv("POSTGRES_USER").strip()
+    POSTGRES_DB: str = os.getenv("POSTGRES_DB").strip()
+    PG_ADMIN_EMAIL: str = os.getenv("PG_ADMIN_EMAIL").strip()
+    PG_ADMIN_PASSWORD: str = os.getenv("PG_ADMIN_PASSWORD").strip()

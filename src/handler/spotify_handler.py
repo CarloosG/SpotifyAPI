@@ -28,6 +28,8 @@ class SpotifyHandler:
                 self._initialized = True
 
         def get_token(self):
+            print("TOKEN_URL:", self.token_url)
+            print("CLIENT_ID:", self.client_id[:5] if self.client_id else None)
             headers = {
                 "Content-Type": "application/x-www-form-urlencoded",
             }
@@ -37,6 +39,13 @@ class SpotifyHandler:
                 "client_secret": self.client_secret,
             }
             response = self.requester.post(self.token_url, headers=headers, data=data)
+
+            if response is None:
+                raise RuntimeError("Spotify token request failed (no response)")
+
+            print("STATUS CODE:", response.status_code)
+            print("RAW TEXT:", response.text)
+
             return response.json().get("access_token")
         
         def get_artist(self, artist_id: str):
